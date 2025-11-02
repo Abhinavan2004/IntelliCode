@@ -15,7 +15,6 @@ const FormattedText = ({ content }) => {
   const processText = (text) => {
     if (!text) return null;
     
-    // Convert **text** to <strong>text</strong>
     const parts = text.split(/(\*\*.*?\*\*)/g);
     return parts.map((part, i) => {
       if (part.startsWith('**') && part.endsWith('**')) {
@@ -35,12 +34,10 @@ const FormattedText = ({ content }) => {
     return text.split('\n').map((line, idx) => {
       const trimmedLine = line.trim();
       
-      // Skip empty lines but add spacing
       if (!trimmedLine) {
         return <div key={idx} className="h-3" />;
       }
       
-      // Numbered list items (1. 2. 3.)
       if (/^\d+\./.test(trimmedLine)) {
         const match = trimmedLine.match(/^(\d+\.)\s*(.+)/);
         if (match) {
@@ -57,7 +54,6 @@ const FormattedText = ({ content }) => {
         }
       }
       
-      // Bullet points (-, •, *)
       if (/^[-•*]\s/.test(trimmedLine)) {
         const content = trimmedLine.replace(/^[-•*]\s/, '');
         return (
@@ -70,7 +66,6 @@ const FormattedText = ({ content }) => {
         );
       }
       
-      // Regular paragraph
       return (
         <p key={idx} className="text-gray-800 leading-relaxed mb-4 pl-2">
           {processText(trimmedLine)}
@@ -98,10 +93,8 @@ const App = () => {
 
   const languages = ['C', 'C++', 'Python', 'Java', 'JavaScript'];
 
-  // This is the URL for the Express backend
   const API_URL = 'https://intellicode-backend.onrender.com';
 
-  // State management for file upload (only reads content)
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -147,7 +140,7 @@ const App = () => {
     }
   }, [code, language]);
 
-  // Helper function for download/copy
+
   const copyToClipboard = (text) => {
     const textarea = document.createElement('textarea');
     textarea.value = text;
@@ -212,7 +205,6 @@ const App = () => {
       );
     }
 
-    // Add section headers with icons
     const sectionInfo = {
       errors: { icon: '🐛', title: 'Issues Found', color: 'from-red-50 to-orange-50' },
       explanations: { icon: '📖', title: 'Detailed Explanations', color: 'from-blue-50 to-cyan-50' },
@@ -232,7 +224,6 @@ const App = () => {
     );
   }, [results, activeTab, language]);
 
-  // Tab component for navigation
   const TabButton = ({ id, label, icon }) => (
     <button
       onClick={() => setActiveTab(id)}

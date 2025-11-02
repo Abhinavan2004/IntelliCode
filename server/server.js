@@ -1,28 +1,19 @@
-// --- IntelliCode Reviewer Backend (server/server.js) ---
 
-// 1. IMPORT DOTENV AND LOAD VARIABLES (Crucial for API Key)
 require('dotenv').config();
 
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
-// Node.js 18+ has built-in fetch - no import needed!
-// If you're on Node < 18, install: npm install node-fetch@2
-
 const app = express();
 const port = 3001;
 
-// Load environment variables
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || ""; 
 
-// Middleware
 app.use(cors()); 
 app.use(bodyParser.json({ limit: '5mb' })); 
 
-// --- Utility Functions for Gemini API ---
 
-// Function to implement exponential backoff for API retries
 const retryFetch = async (url, options, retries = 3) => {
     for (let i = 0; i < retries; i++) {
         try {
@@ -47,7 +38,6 @@ const retryFetch = async (url, options, retries = 3) => {
     }
 };
 
-// --- Route: /api/review ---
 
 app.post('/api/review', async (req, res) => {
     const { code, language } = req.body;
@@ -86,7 +76,7 @@ IMPORTANT: Use **double asterisks** around important terms to make them bold. Ke
 
     const userQuery = `Review the following ${language} code and provide detailed analysis with proper formatting:\n\n\`\`\`${language}\n${code}\n\`\`\``;
 
-    // Use API Key from environment variable
+
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`;
 
     const payload = {
@@ -141,7 +131,6 @@ IMPORTANT: Use **double asterisks** around important terms to make them bold. Ke
             });
         }
         
-        // Use a robust method to parse the JSON, handling any potential markdown wrapper
         const cleanJsonText = jsonText.replace(/^```json\s*|^\s*```|```\s*$/g, '');
         const parsedResponse = JSON.parse(cleanJsonText);
 
@@ -153,15 +142,6 @@ IMPORTANT: Use **double asterisks** around important terms to make them bold. Ke
     }
 });
 
-// Health check endpoint
-app.get('/health', (req, res) => {
-    res.json({ 
-        status: 'OK', 
-        apiKeyConfigured: !!GEMINI_API_KEY 
-    });
-});
-
-// Start server
 app.listen(port, () => {
     console.log(`IntelliCode Reviewer backend listening at http://localhost:${port}`);
     console.log(`API Key Status: ${GEMINI_API_KEY ? 'Loaded ✓' : 'MISSING ✗ (Check .env file)'}`);
