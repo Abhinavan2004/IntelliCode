@@ -99,7 +99,7 @@ const App = () => {
   const languages = ['C', 'C++', 'Python', 'Java', 'JavaScript'];
 
   // This is the URL for the Express backend
-  const API_URL = 'http://localhost:3001/api/review';
+  const API_URL = 'https://intellicode-backend.onrender.com';
 
   // State management for file upload (only reads content)
   const handleFileChange = (event) => {
