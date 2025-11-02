@@ -1,4 +1,3 @@
-
 require('dotenv').config();
 
 const express = require('express');
@@ -6,13 +5,17 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001; // IMPORTANT: Use Render's dynamic port
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || ""; 
 
-app.use(cors()); 
-app.use(bodyParser.json({ limit: '5mb' })); 
+// CORS Configuration for production
+app.use(cors({
+    origin: true, // Allow all origins for now, restrict later
+    credentials: true
+})); 
 
+app.use(bodyParser.json({ limit: '5mb' })); 
 
 const retryFetch = async (url, options, retries = 3) => {
     for (let i = 0; i < retries; i++) {
@@ -38,19 +41,41 @@ const retryFetch = async (url, options, retries = 3) => {
     }
 };
 
+// Root endpoint
+app.get('/', (req, res) => {
+    res.json({ 
+        message: 'IntelliCode Reviewer API',
+        status: 'running',
+        version: '1.0.0',
+        endpoints: {
+            health: '/health',
+            review: '/api/review (POST)'
+        }
+    });
+});
 
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.json({ 
+        status: 'OK', 
+        apiKeyConfigured: !!GEMINI_API_KEY,
+        timestamp: new Date().toISOString()
+    });
+});
+
+// Main review endpoint
 app.post('/api/review', async (req, res) => {
     const { code, language } = req.body;
 
     if (!GEMINI_API_KEY) {
-        return res.status(500).json({ error: 'GEMINI_API_KEY is not set. Please check your .env file.' });
+        return res.status(500).json({ error: 'GEMINI_API_KEY is not set. Please configure environment variables.' });
     }
 
     if (!code || !language) {
         return res.status(400).json({ error: 'Code and language are required.' });
     }
 
-    console.log(`Received review request for ${language} code.`);
+    console.log(`Received review request for ${language} code at ${new Date().toISOString()}`);
 
     const systemPrompt = `You are a world-class code reviewer and expert software engineer. Analyze the provided ${language} code and provide a comprehensive review.
 
@@ -76,7 +101,6 @@ IMPORTANT: Use **double asterisks** around important terms to make them bold. Ke
 
     const userQuery = `Review the following ${language} code and provide detailed analysis with proper formatting:\n\n\`\`\`${language}\n${code}\n\`\`\``;
 
-
     const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${GEMINI_API_KEY}`;
 
     const payload = {
@@ -91,19 +115,19 @@ IMPORTANT: Use **double asterisks** around important terms to make them bold. Ke
                 properties: {
                     "errors": { 
                         "type": "STRING", 
-                        "description": "List of detected issues as a numbered list with line references. Each error on a new line with proper spacing." 
+                        "description": "List of detected issues as a numbered list with line references." 
                     },
                     "corrected_code": { 
                         "type": "STRING", 
-                        "description": "The complete corrected code with proper indentation, line breaks, and formatting preserved." 
+                        "description": "The complete corrected code with proper indentation and formatting." 
                     },
                     "explanations": { 
                         "type": "STRING", 
-                        "description": "Detailed explanations formatted with paragraphs, bullet points, and proper spacing for readability." 
+                        "description": "Detailed explanations formatted with paragraphs and proper spacing." 
                     },
                     "recommendations": { 
                         "type": "STRING", 
-                        "description": "Best practices and optimization suggestions as a formatted list with proper spacing between items." 
+                        "description": "Best practices and optimization suggestions as a formatted list." 
                     }
                 },
                 "propertyOrdering": ["errors", "corrected_code", "explanations", "recommendations"]
@@ -120,7 +144,6 @@ IMPORTANT: Use **double asterisks** around important terms to make them bold. Ke
 
         const result = await response.json();
 
-        // Extract the raw JSON string from the Gemini response
         const jsonText = result.candidates?.[0]?.content?.parts?.[0]?.text;
 
         if (!jsonText) {
@@ -134,6 +157,7 @@ IMPORTANT: Use **double asterisks** around important terms to make them bold. Ke
         const cleanJsonText = jsonText.replace(/^```json\s*|^\s*```|```\s*$/g, '');
         const parsedResponse = JSON.parse(cleanJsonText);
 
+        console.log('Successfully processed review request');
         res.json(parsedResponse);
 
     } catch (error) {
@@ -142,8 +166,10 @@ IMPORTANT: Use **double asterisks** around important terms to make them bold. Ke
     }
 });
 
-app.listen(port, () => {
-    console.log(`IntelliCode Reviewer backend listening at http://localhost:${port}`);
-    console.log(`API Key Status: ${GEMINI_API_KEY ? 'Loaded ✓' : 'MISSING ✗ (Check .env file)'}`);
+// Start server
+app.listen(port, '0.0.0.0', () => {
+    console.log(`IntelliCode Reviewer backend listening at http://0.0.0.0:${port}`);
+    console.log(`API Key Status: ${GEMINI_API_KEY ? 'Loaded ✓' : 'MISSING ✗ (Check environment variables)'}`);
     console.log(`Node version: ${process.version}`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
