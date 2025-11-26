@@ -5,13 +5,13 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 
 const app = express();
-const port = process.env.PORT || 3001; // IMPORTANT: Use Render's dynamic port
+const port = process.env.PORT || 3001; 
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY || ""; 
 
 // CORS Configuration for production
 app.use(cors({
-    origin: true, // Allow all origins for now, restrict later
+    origin: true,
     credentials: true
 })); 
 
@@ -41,7 +41,6 @@ const retryFetch = async (url, options, retries = 3) => {
     }
 };
 
-// Root endpoint
 app.get('/', (req, res) => {
     res.json({ 
         message: 'IntelliCode Reviewer API',
@@ -54,7 +53,6 @@ app.get('/', (req, res) => {
     });
 });
 
-// Health check endpoint
 app.get('/health', (req, res) => {
     res.json({ 
         status: 'OK', 
@@ -63,7 +61,6 @@ app.get('/health', (req, res) => {
     });
 });
 
-// Main review endpoint
 app.post('/api/review', async (req, res) => {
     const { code, language } = req.body;
 

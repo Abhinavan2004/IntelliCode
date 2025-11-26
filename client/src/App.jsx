@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useMemo } from 'react';
 
-// Helper component to display formatted code
+//to display formatted code
 const CodeDisplay = ({ code, language }) => (
   <pre className="bg-gray-900 text-gray-100 p-6 rounded-lg overflow-auto text-sm shadow-inner font-mono leading-relaxed">
     <code className={`language-${language}`}>
@@ -9,9 +9,8 @@ const CodeDisplay = ({ code, language }) => (
   </pre>
 );
 
-// Helper component to display formatted text with proper styling
+// to display formatted text with proper styling
 const FormattedText = ({ content }) => {
-  // Process markdown-style bold text and create beautiful formatting
   const processText = (text) => {
     if (!text) return null;
     
