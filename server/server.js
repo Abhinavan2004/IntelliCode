@@ -76,7 +76,7 @@ app.post('/api/review', async (req, res) => {
 
     console.log(`Received review request for ${language} code at ${new Date().toISOString()}`);
 
-    // 🔥 KEEPING YOUR SYSTEM INSTRUCTIONS EXACTLY SAME
+    // KEEPING YOUR SYSTEM INSTRUCTIONS EXACTLY SAME
     const systemPrompt = `
 You are a world-class code reviewer and expert software engineer. Analyze the provided ${language} code and provide a comprehensive review.
 
@@ -107,14 +107,14 @@ Respond ONLY in valid JSON with these fields:
 
     const userPrompt = `Review the following ${language} code:\n\n\`\`\`${language}\n${code}\n\`\`\``;
 
-    // NEW WORKING ENDPOINT FOR FREE TIER
-const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`;
+    // ✔ WORKING FREE-TIER MODEL ENDPOINT
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`;
 
-    console.log("🔥 Using model: gemini-1.5-flash");
+    console.log("🔥 Using model: gemini-pro (FREE TIER)");
     console.log("🔥 API URL:", apiUrl);
     console.log("Loaded GEMINI_API_KEY:", GEMINI_API_KEY);
 
-    // NEW v1 API FORMAT
+    // Correct v1beta payload format
     const payload = {
         contents: [
             {
@@ -124,7 +124,7 @@ const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-p
             }
         ],
         generationConfig: {
-            temperature: 0.4,
+            temperature: 0.3,
             maxOutputTokens: 2048
         }
     };
@@ -145,7 +145,7 @@ const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-p
             return res.status(500).json({ error: "Invalid response from Gemini", raw: data });
         }
 
-        // Remove possible ```json fences
+        // Remove code fences
         const clean = text.replace(/```json|```/g, "").trim();
 
         let parsed;
@@ -173,4 +173,3 @@ app.listen(port, '0.0.0.0', () => {
     console.log(`API Key Status: ${GEMINI_API_KEY ? 'Loaded ✓' : 'MISSING ✗'}`);
     console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
-
