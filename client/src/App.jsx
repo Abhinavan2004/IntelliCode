@@ -9,7 +9,6 @@ const CodeDisplay = ({ code, language }) => (
   </pre>
 );
 
-// to display formatted text with proper styling
 const FormattedText = ({ content }) => {
   const processText = (text) => {
     if (!text) return null;
@@ -129,7 +128,7 @@ const App = () => {
 
       const data = await response.json();
       setResults(data);
-      setActiveTab('corrected_code'); // Switch to the corrected code tab upon success
+      setActiveTab('corrected_code');
 
     } catch (err) {
       console.error('Code review failed:', err);
@@ -269,13 +268,11 @@ const App = () => {
               </select>
             </div>
 
-            {/* File Upload Button */}
             <label className="flex-shrink-0 cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold py-3 px-5 rounded-lg shadow-md transition-all duration-200 hover:shadow-lg">
               📁 Upload File
               <input type="file" onChange={handleFileChange} className="hidden" accept=".c,.cpp,.py,.java,.js,.txt" />
             </label>
 
-            {/* Analyze Button */}
             <button
               onClick={handleReviewCode}
               disabled={isLoading}
@@ -297,7 +294,6 @@ const App = () => {
             </button>
           </div>
 
-          {/* Code Editor Area */}
           <label htmlFor="code-editor" className="block text-sm font-semibold text-gray-700 mb-2">
             Paste Your Code Here:
           </label>
@@ -310,7 +306,6 @@ const App = () => {
             className="w-full p-5 border-2 border-gray-300 rounded-lg shadow-inner resize-none font-mono text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all bg-gray-50"
           ></textarea>
 
-          {/* Error Message */}
           {error && (
             <div className="mt-5 p-4 bg-red-50 border-l-4 border-red-500 text-red-800 rounded-lg" role="alert">
               <p className="font-semibold">❌ Error</p>
@@ -319,7 +314,6 @@ const App = () => {
           )}
         </div>
 
-        {/* Results Display */}
         {results && (
           <div className="bg-gradient-to-br from-white to-gray-50 p-8 rounded-2xl shadow-2xl border-2 border-indigo-100">
             <div className="flex items-center gap-3 mb-8">
@@ -332,7 +326,6 @@ const App = () => {
               </div>
             </div>
             
-            {/* Tabs Navigation */}
             <div className="border-b-2 border-gray-200 mb-8">
               <nav className="-mb-0.5 flex flex-wrap gap-2">
                 <TabButton id="corrected_code" label="Corrected Code" icon="✅" />
@@ -342,7 +335,6 @@ const App = () => {
               </nav>
             </div>
 
-            {/* Tab Content */}
             <div className="min-h-[300px]">
               {ResultSection}
             </div>

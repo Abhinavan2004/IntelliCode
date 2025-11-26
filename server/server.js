@@ -45,7 +45,6 @@ const retryFetch = async (url, options, retries = 3) => {
     }
 };
 
-// Health route
 app.get('/', (req, res) => {
     res.json({
         message: 'IntelliCode Reviewer API',
@@ -76,7 +75,6 @@ app.post('/api/review', async (req, res) => {
 
     console.log(`Received review request for ${language} code at ${new Date().toISOString()}`);
 
-    // KEEPING YOUR SYSTEM INSTRUCTIONS EXACTLY SAME
     const systemPrompt = `
 You are a world-class code reviewer and expert software engineer. Analyze the provided ${language} code and provide a comprehensive review.
 
@@ -107,14 +105,11 @@ Respond ONLY in valid JSON with these fields:
 
     const userPrompt = `Review the following ${language} code:\n\n\`\`\`${language}\n${code}\n\`\`\``;
 
-    // ✔ WORKING FREE-TIER MODEL ENDPOINT
-// Updated to use the newer, faster, and currently supported Gemini 1.5 Flash model
-const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-002:generateContent?key=${GEMINI_API_KEY}`;
     console.log("🔥 Using model: gemini-pro (FREE TIER)");
     console.log("🔥 API URL:", apiUrl);
     console.log("Loaded GEMINI_API_KEY:", GEMINI_API_KEY);
 
-    // Correct v1beta payload format
     const payload = {
         contents: [
             {
@@ -138,14 +133,12 @@ maxOutputTokens: 8192
 
         const data = await response.json();
 
-        // Extract model output
         const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
 
         if (!text) {
             return res.status(500).json({ error: "Invalid response from Gemini", raw: data });
         }
 
-        // Remove code fences
         const clean = text.replace(/```json|```/g, "").trim();
 
         let parsed;
@@ -167,7 +160,6 @@ maxOutputTokens: 8192
     }
 });
 
-// Start Server
 app.listen(port, '0.0.0.0', () => {
     console.log(`IntelliCode Reviewer backend listening at http://0.0.0.0:${port}`);
     console.log(`API Key Status: ${GEMINI_API_KEY ? 'Loaded ✓' : 'MISSING ✗'}`);
