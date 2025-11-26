@@ -98,7 +98,7 @@ IMPORTANT: Use **double asterisks** around important terms to make them bold. Ke
 
     const userQuery = `Review the following ${language} code and provide detailed analysis with proper formatting:\n\n\`\`\`${language}\n${code}\n\`\`\``;
 
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+    const apiUrl = `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
         console.log("🔥 Using model: gemini-1.5-flash");
     console.log("🔥 API URL:", apiUrl);
