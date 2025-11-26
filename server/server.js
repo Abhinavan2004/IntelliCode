@@ -108,8 +108,8 @@ Respond ONLY in valid JSON with these fields:
     const userPrompt = `Review the following ${language} code:\n\n\`\`\`${language}\n${code}\n\`\`\``;
 
     // ✔ WORKING FREE-TIER MODEL ENDPOINT
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${GEMINI_API_KEY}`;
-
+// Updated to use the newer, faster, and currently supported Gemini 1.5 Flash model
+const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
     console.log("🔥 Using model: gemini-pro (FREE TIER)");
     console.log("🔥 API URL:", apiUrl);
     console.log("Loaded GEMINI_API_KEY:", GEMINI_API_KEY);
@@ -125,7 +125,7 @@ Respond ONLY in valid JSON with these fields:
         ],
         generationConfig: {
             temperature: 0.3,
-            maxOutputTokens: 2048
+maxOutputTokens: 8192
         }
     };
 
