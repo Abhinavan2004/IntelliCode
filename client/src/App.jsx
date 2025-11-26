@@ -92,7 +92,7 @@ const App = () => {
 
   const languages = ['C', 'C++', 'Python', 'Java', 'JavaScript'];
 
-  const API_URL = 'https://intellicode-backend.onrender.com/api/review';
+  const API_URL = 'https://intellicode-backend-2.onrender.com/api/review'; 
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
